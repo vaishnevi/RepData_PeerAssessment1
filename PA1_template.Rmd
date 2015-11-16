@@ -1,25 +1,39 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
+title: "Analysis of activity monitoring data"
+output: html_document
 ---
+###1.Loading and pre-processing the dataset
+The following code reads the given activity.csv file and pre-processes it to produce appropriate structure for analysis. The date portion of the data is converted into date format. 
 
 
-## Loading and preprocessing the data
+```{r echo=TRUE,results='hide'}
+unzip("activity.zip")
+data <- read.csv("activity.csv")
+data$date <- as.Date(data$date)
+```
+###2. What is mean total number of steps taken per day?
+For this part of the assignment, you can ignore the missing values in the dataset.
 
+1.Calculate the total number of steps taken per day. 
+2.If you do not understand the difference between a histogram and a barplot, research the difference between them. Make a histogram of the total number of steps taken each day.
+3.Calculate and report the mean and median of the total number of steps taken per day.
 
+```{r, echo=TRUE}
+ans <- sapply(split(data[1],data$date),sum,na.rm=TRUE)
 
-## What is mean total number of steps taken per day?
+hist(ans,main=paste("HISTOGRAM OF STEPS TAKEN"),xlab="STEPS",ylab="NUMBER OF DAYS")
 
+mean(ans)
+median(ans)
+```
 
+###3.What is the average daily activity pattern?
+Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis).Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+```{r, echo=TRUE}
+mean_steps <- sapply(split(data$steps,data$interval),mean,na.rm=TRUE)
+interval <- as.factor(data$interval)
+mean_steps <- data.frame(mean_steps,interval)
+plot(mean_steps$interval,mean_steps$mean_steps)
+mean_steps[which.max(mean_steps$mean_steps),]
 
-## What is the average daily activity pattern?
-
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
+```
